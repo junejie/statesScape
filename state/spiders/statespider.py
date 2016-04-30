@@ -28,4 +28,4 @@ class StatespiderSpider(scrapy.Spider):
             item = StateItem()
             item['image_urls']  ='http://www.state.gov'+img
             item['images']  = str(time.time())
-            d.process_item(self, item )
+            d.process_item( item,self )

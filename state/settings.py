@@ -64,7 +64,7 @@ NEWSPIDER_MODULE = 'state.spiders'
 #ITEM_PIPELINES = {
 #    'state.pipelines.SomePipeline': 300,
 #}
-ITEM_PIPELINES = {'scrapy.pipelines.images.ImagesPipeline': 1}
+ITEM_PIPELINES = {'state.pipelines.StatePipeline': 1}
 IMAGES_STORE = '/home/junejie/Documents/junejie/git/test-scrape/state/state/images'
 
 

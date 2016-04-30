@@ -13,7 +13,7 @@ class StatespiderSpider(scrapy.Spider):
 
     def parse(self, response):
         for url in response.xpath('//html/body/div[2]/div[2]/div/div[2]/div/div[3]/table/tbody/tr/td/div/div/div/div/blockquote/p/a/text()').extract():
-            yield { "c": url}
+            yield { "state": url}
 
         for url in response.xpath('//html/body/div[2]/div[2]/div/div[2]/div/div[3]/table/tbody/tr/td/div/div/div/div/blockquote/p/a/@href'):
             url = response.urljoin(url.extract())

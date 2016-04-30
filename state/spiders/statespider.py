@@ -27,5 +27,5 @@ class StatespiderSpider(scrapy.Spider):
             img= i.extract()
             item = StateItem()
             item['image_urls']  ='http://www.state.gov'+img
-            item['image']  = str(time.time())
+            item['images']  = str(time.time())
             d.process_item(self, item )

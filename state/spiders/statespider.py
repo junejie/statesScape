@@ -25,9 +25,10 @@ class StatespiderSpider(scrapy.Spider):
         print 'data::::', response
         
         for i in response.xpath(".//*[@id='tier3-landing-content']/p[2]/img/@src"):
-            img = i 
+            img = [ 'http://www.state.gov/' + i.extract()[1:]]
             item = StateItem()
-            item['image_urls']  =  [ urlparse.urljoin(response.url, u) for u in img.extract() ]
+            
+            item['image_urls']  = img
             item['images']  = str(time.time())
             print 'data-1:::;',item
             yield item

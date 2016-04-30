@@ -1,3 +1,4 @@
+state/images/*
 state/**.pyc
 *.pyc
 

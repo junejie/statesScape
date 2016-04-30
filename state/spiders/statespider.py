@@ -14,20 +14,36 @@ class StatespiderSpider(scrapy.Spider):
     
 
     def parse(self, response):
-        for url in response.xpath('//html/body/div[2]/div[2]/div/div[2]/div/div[3]/table/tbody/tr/td/div/div/div/div/blockquote/p/a/text()').extract():
-            yield { "state": url}
+        allStates = response.xpath('//html/body/div[2]/div[2]/div/div[2]/div/div[3]/table/tbody/tr/td/div/div/div/div/blockquote/p/a/text()').extract()
+        
+        allFlag = response.xpath('//html/body/div[2]/div[2]/div/div[2]/div/div[3]/table/tbody/tr/td/div/div/div/div/blockquote/p/a/@href')
+        
+        #validate all flag is equal to state
+        print len(allStates), len(allFlag)
 
-        for url in response.xpath('//html/body/div[2]/div[2]/div/div[2]/div/div[3]/table/tbody/tr/td/div/div/div/div/blockquote/p/a/@href'):
+        flagNumber = 0       
+        for url in allFlag:
             url = response.urljoin(url.extract())
-            yield scrapy.Request(url, callback=self.proc_url)
+            flag = scrapy.Request(url, callback=self.proc_url)
+
+            #extra data save to meta
+            flag.meta['item'] = {'state':allStates[flagNumber]}
+
+            #iterate val for meta
+            flagNumber = flagNumber+1
+            
+            yield flag
 
     def proc_url(self, response):
-        print 'data::::', response
+        print 'response::::', response.meta['item']
         
-        for i in response.xpath(".//*[@id='tier3-landing-content']/p[2]/img/@src"):
-            img = [ 'http://www.state.gov/' + i.extract()[1:]]
+        for images in response.xpath(".//*[@id='tier3-landing-content']/p[2]/img/@src"):
+            img = [ 'http://www.state.gov/' + images.extract()[1:]]
             item = StateItem()            
             item['image_urls']  = img
+
+            # this data is from meta
+            item['state']  = response.meta['item']
             item['images']  = str(time.time())
-            print 'data-1:::;',item
+            print 'data-1:::;',images
             yield item

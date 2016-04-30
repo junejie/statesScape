@@ -1,19 +1,21 @@
 # -*- coding: utf-8 -*-
 import scrapy
 import time
+import urlparse
 from state.items import StateItem
 from state.pipelines import StatePipeline
 
 class StatespiderSpider(scrapy.Spider):
     name = "statespider"
     allowed_domains = ["www.state.gov"]
-    start_urls = (
-        'http://www.state.gov/misc/list/',
-    )
+    start_urls = [
+        'http://www.state.gov/misc/list/'
+    ]
+    
 
     def parse(self, response):
-        for url in response.xpath('//html/body/div[2]/div[2]/div/div[2]/div/div[3]/table/tbody/tr/td/div/div/div/div/blockquote/p/a/text()').extract():
-            yield { "state": url}
+        # for url in response.xpath('//html/body/div[2]/div[2]/div/div[2]/div/div[3]/table/tbody/tr/td/div/div/div/div/blockquote/p/a/text()').extract():
+        #     yield { "state": url}
 
         for url in response.xpath('//html/body/div[2]/div[2]/div/div[2]/div/div[3]/table/tbody/tr/td/div/div/div/div/blockquote/p/a/@href'):
             url = response.urljoin(url.extract())
@@ -21,11 +23,11 @@ class StatespiderSpider(scrapy.Spider):
 
     def proc_url(self, response):
         print 'data::::', response
-        d = StatePipeline()
         
         for i in response.xpath(".//*[@id='tier3-landing-content']/p[2]/img/@src"):
-            img= i.extract()
+            img = i 
             item = StateItem()
-            item['image_urls']  ='http://www.state.gov'+img
+            item['image_urls']  =  [ urlparse.urljoin(response.url, u) for u in img.extract() ]
             item['images']  = str(time.time())
-            d.process_item( item,self )
+            print 'data-1:::;',item
+            yield item
